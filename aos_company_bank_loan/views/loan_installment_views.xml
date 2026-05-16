@@ -15,7 +15,7 @@
                             type="object"
                             class="btn-primary"
                             invisible="state == 'paid'"
-                            groups="loan_management.group_loan_user"/>
+                            groups="aos_company_bank_loan.group_loan_user"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="pending,partial,paid"/>
                 </header>
@@ -87,14 +87,14 @@
                         class="btn-sm btn-primary"
                         icon="fa-check"
                         invisible="state == 'paid'"
-                        groups="loan_management.group_loan_user"/>
+                        groups="aos_company_bank_loan.group_loan_user"/>
                 <button name="action_view_payment_entry"
                         string="Entry"
                         type="object"
                         class="btn-sm btn-secondary"
                         icon="fa-book"
                         invisible="not move_id"
-                        groups="loan_management.group_loan_user"/>
+                        groups="aos_company_bank_loan.group_loan_user"/>
             </list>
         </field>
     </record>

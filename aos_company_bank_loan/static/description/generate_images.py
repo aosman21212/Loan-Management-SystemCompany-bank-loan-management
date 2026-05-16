@@ -4,7 +4,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-OUT = "/home/odoo/src/user/loan_management/static/description"
+OUT = "/home/odoo/src/user/aos_company_bank_loan/static/description"
 FONT_REG  = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
 FONT_BOLD = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
 

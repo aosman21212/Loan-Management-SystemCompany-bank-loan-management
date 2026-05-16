@@ -15,35 +15,35 @@
                             type="object"
                             class="btn-primary"
                             invisible="state != 'draft'"
-                            groups="loan_management.group_loan_user"/>
+                            groups="aos_company_bank_loan.group_loan_user"/>
                     <button name="action_approve"
                             string="Approve"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'confirm'"
-                            groups="loan_management.group_loan_manager"/>
+                            groups="aos_company_bank_loan.group_loan_manager"/>
                     <button name="action_generate_schedule"
                             string="Generate Schedule"
                             type="object"
                             invisible="state not in ('approve',)"
-                            groups="loan_management.group_loan_manager"/>
+                            groups="aos_company_bank_loan.group_loan_manager"/>
                     <button name="action_disburse"
                             string="Receive Loan"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'approve'"
-                            groups="loan_management.group_loan_manager"/>
+                            groups="aos_company_bank_loan.group_loan_manager"/>
                     <button name="action_cancel"
                             string="Cancel"
                             type="object"
                             invisible="state in ('done', 'cancel')"
-                            groups="loan_management.group_loan_manager"
+                            groups="aos_company_bank_loan.group_loan_manager"
                             confirm="Are you sure you want to cancel this loan?"/>
                     <button name="action_reset_draft"
                             string="Reset to Draft"
                             type="object"
                             invisible="state != 'cancel'"
-                            groups="loan_management.group_loan_manager"/>
+                            groups="aos_company_bank_loan.group_loan_manager"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,confirm,approve,running,done"/>
@@ -155,7 +155,7 @@
                                             class="btn-sm btn-primary"
                                             icon="fa-check"
                                             invisible="state in ('paid',)"
-                                            groups="loan_management.group_loan_user"/>
+                                            groups="aos_company_bank_loan.group_loan_user"/>
                                 </list>
                             </field>
                         </page>
