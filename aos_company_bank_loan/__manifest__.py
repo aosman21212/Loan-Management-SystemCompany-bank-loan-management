@@ -17,8 +17,18 @@ Manages loans the **company takes from banks / financial institutions**.
     - Repayment:     Dr Loan Payable + Dr Interest Expense  /  Cr Bank
 * Professional PDF loan statement with full amortisation table
 * Demo data included (3 live loans from banks)
+
+----
+
+**Author:** leapai.ai
+**Website:** https://leapai.ai/en/
+**Support:** abdzoro89@gmail.com
+**Maintainer:** a.osman@bab.com.sa
     """,
-    'author': 'Custom',
+    'author': 'leapai.ai',
+    'website': 'https://leapai.ai/en/',
+    'support': 'abdzoro89@gmail.com',
+    'maintainer': 'a.osman@bab.com.sa',
     'images': [
         'static/description/banner.png',
         'static/description/screenshot_01_loans_list.png',
