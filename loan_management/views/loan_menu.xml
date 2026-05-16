@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!--  Top-level App Menu                                               -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_loan_root"
+              name="Loans"
+              sequence="75"
+              web_icon="loan_management,static/description/icon.png"
+              groups="loan_management.group_loan_user"/>
+
+    <!-- ================================================================ -->
+    <!--  Loans section                                                    -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_loan_loans"
+              name="Loans"
+              parent="menu_loan_root"
+              sequence="10"
+              groups="loan_management.group_loan_user"/>
+
+    <menuitem id="menu_loan_all"
+              name="All Loans"
+              parent="menu_loan_loans"
+              action="action_loan_all"
+              sequence="10"
+              groups="loan_management.group_loan_user"/>
+
+    <menuitem id="menu_loan_my"
+              name="My Loans"
+              parent="menu_loan_loans"
+              action="action_loan_my"
+              sequence="20"
+              groups="loan_management.group_loan_user"/>
+
+    <!-- ================================================================ -->
+    <!--  Repayments section                                               -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_loan_repayments"
+              name="Repayments"
+              parent="menu_loan_root"
+              sequence="20"
+              groups="loan_management.group_loan_user"/>
+
+    <menuitem id="menu_loan_installments"
+              name="Installments"
+              parent="menu_loan_repayments"
+              action="action_loan_installment"
+              sequence="10"
+              groups="loan_management.group_loan_user"/>
+
+    <!-- ================================================================ -->
+    <!--  Configuration section                                            -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_loan_config"
+              name="Configuration"
+              parent="menu_loan_root"
+              sequence="99"
+              groups="loan_management.group_loan_manager"/>
+
+    <menuitem id="menu_loan_type_config"
+              name="Loan Types"
+              parent="menu_loan_config"
+              action="action_loan_type"
+              sequence="10"
+              groups="loan_management.group_loan_manager"/>
+
+</odoo>

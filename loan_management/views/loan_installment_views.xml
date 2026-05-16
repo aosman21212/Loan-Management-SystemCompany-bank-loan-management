@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!--  Loan Installment — Form View                                     -->
+    <!-- ================================================================ -->
+    <record id="view_loan_installment_form" model="ir.ui.view">
+        <field name="name">loan.installment.form</field>
+        <field name="model">loan.installment</field>
+        <field name="arch" type="xml">
+            <form string="Loan Installment">
+                <header>
+                    <button name="action_pay"
+                            string="Mark as Paid"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'paid'"
+                            groups="loan_management.group_loan_user"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,partial,paid"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Installment Details">
+                            <field name="loan_id"/>
+                            <field name="sequence" string="Installment #"/>
+                            <field name="due_date"/>
+                            <field name="state" widget="badge"
+                                   decoration-danger="state == 'overdue'"
+                                   decoration-success="state == 'paid'"
+                                   decoration-warning="state == 'partial'"/>
+                        </group>
+                        <group string="Amounts">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="principal_amount"/>
+                            <field name="interest_amount"/>
+                            <field name="total_amount" string="EMI Amount"/>
+                            <field name="balance" string="Remaining Balance After"/>
+                        </group>
+                    </group>
+                    <group string="Payment Info" invisible="state == 'pending'">
+                        <group>
+                            <field name="payment_date"/>
+                            <field name="amount_paid"/>
+                        </group>
+                        <group>
+                            <field name="move_id" string="Payment Entry"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Installment — List View                                     -->
+    <!-- ================================================================ -->
+    <record id="view_loan_installment_list" model="ir.ui.view">
+        <field name="name">loan.installment.list</field>
+        <field name="model">loan.installment</field>
+        <field name="arch" type="xml">
+            <list string="Loan Installments"
+                  decoration-danger="state == 'overdue'"
+                  decoration-success="state == 'paid'"
+                  decoration-warning="state == 'partial'">
+                <field name="loan_id" optional="show"/>
+                <field name="sequence" string="#"/>
+                <field name="due_date"/>
+                <field name="principal_amount"/>
+                <field name="interest_amount"/>
+                <field name="total_amount" string="EMI"/>
+                <field name="balance"/>
+                <field name="amount_paid" optional="show"/>
+                <field name="payment_date" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'overdue'"
+                       decoration-success="state == 'paid'"
+                       decoration-warning="state == 'partial'"
+                       decoration-info="state == 'pending'"/>
+                <field name="move_id" optional="hide"/>
+                <button name="action_pay"
+                        string="Pay"
+                        type="object"
+                        class="btn-sm btn-primary"
+                        icon="fa-check"
+                        invisible="state == 'paid'"
+                        groups="loan_management.group_loan_user"/>
+                <button name="action_view_payment_entry"
+                        string="Entry"
+                        type="object"
+                        class="btn-sm btn-secondary"
+                        icon="fa-book"
+                        invisible="not move_id"
+                        groups="loan_management.group_loan_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Installment — Search View                                   -->
+    <!-- ================================================================ -->
+    <record id="view_loan_installment_search" model="ir.ui.view">
+        <field name="name">loan.installment.search</field>
+        <field name="model">loan.installment</field>
+        <field name="arch" type="xml">
+            <search string="Installments">
+                <field name="loan_id"/>
+                <field name="due_date"/>
+                <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                <filter string="Overdue" name="overdue" domain="[('state', '=', 'overdue')]"/>
+                <filter string="Partially Paid" name="partial" domain="[('state', '=', 'partial')]"/>
+                <filter string="Paid" name="paid" domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter string="Due This Month" name="due_month"
+                        domain="[('due_date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
+                                 ('due_date', '&lt;=', (context_today()).strftime('%Y-%m-28'))]"/>
+                <group>
+                    <filter string="Loan" name="group_loan" context="{'group_by': 'loan_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Due Date" name="group_due" context="{'group_by': 'due_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Installment — Action                                        -->
+    <!-- ================================================================ -->
+    <record id="action_loan_installment" model="ir.actions.act_window">
+        <field name="name">Installments</field>
+        <field name="res_model">loan.installment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_loan_installment_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No installments found
+            </p>
+            <p>
+                Installments are generated automatically when a loan is disbursed.
+            </p>
+        </field>
+    </record>
+
+</odoo>

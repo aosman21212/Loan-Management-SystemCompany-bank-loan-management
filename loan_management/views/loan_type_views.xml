@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!--  Loan Type — Form View                                            -->
+    <!-- ================================================================ -->
+    <record id="view_loan_type_form" model="ir.ui.view">
+        <field name="name">loan.type.form</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <form string="Loan Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_loans"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money">
+                            <field name="loan_count" widget="statinfo" string="Loans"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Personal Loan"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="General">
+                            <field name="code"/>
+                            <field name="interest_rate"/>
+                            <field name="interest_method"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="max_amount"/>
+                            <field name="max_duration"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Accounting">
+                            <field name="loan_account_id"/>
+                            <field name="interest_account_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Optional description for this loan type..."/>
+                        </page>
+                        <page string="Chatter" name="chatter">
+                            <div class="oe_chatter">
+                                <field name="message_follower_ids"/>
+                                <field name="message_ids"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Type — List View                                            -->
+    <!-- ================================================================ -->
+    <record id="view_loan_type_list" model="ir.ui.view">
+        <field name="name">loan.type.list</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <list string="Loan Types" decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="interest_rate" string="Rate (%)"/>
+                <field name="interest_method"/>
+                <field name="max_amount"/>
+                <field name="max_duration" string="Max Months"/>
+                <field name="loan_count" string="Loans"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Type — Kanban View                                          -->
+    <!-- ================================================================ -->
+    <record id="view_loan_type_kanban" model="ir.ui.view">
+        <field name="name">loan.type.kanban</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="interest_rate"/>
+                <field name="interest_method"/>
+                <field name="max_amount"/>
+                <field name="loan_count"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <span t-if="record.code.value" class="o_kanban_record_subtitle text-muted">
+                                        <field name="code"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>
+                                    <strong>Rate: </strong>
+                                    <field name="interest_rate"/>% —
+                                    <field name="interest_method"/>
+                                </div>
+                                <div t-if="record.max_amount.value">
+                                    <strong>Max: </strong>
+                                    <field name="max_amount"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span class="badge bg-info">
+                                        <field name="loan_count"/> Loans
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Type — Search View                                          -->
+    <!-- ================================================================ -->
+    <record id="view_loan_type_search" model="ir.ui.view">
+        <field name="name">loan.type.search</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <search string="Loan Types">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Flat Rate" name="flat" domain="[('interest_method','=','flat')]"/>
+                <filter string="Reducing Balance" name="reducing" domain="[('interest_method','=','reducing')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                <group>
+                    <filter string="Interest Method" name="group_method" context="{'group_by': 'interest_method'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!--  Loan Type — Action                                               -->
+    <!-- ================================================================ -->
+    <record id="action_loan_type" model="ir.actions.act_window">
+        <field name="name">Loan Types</field>
+        <field name="res_model">loan.type</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_loan_type_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Loan Type
+            </p>
+            <p>
+                Loan types define default parameters such as interest rate, method,
+                and associated accounts.
+            </p>
+        </field>
+    </record>
+
+</odoo>

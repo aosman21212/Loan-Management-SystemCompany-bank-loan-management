@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Loan Management System - Odoo 19</title>
+</head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;">
+
+<style>
+    *{box-sizing:border-box;}
+    a{color:#2563eb;text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    /* Hero */
+    .hero{background:linear-gradient(135deg,#0f2d52 0%,#1a3c5e 50%,#2d6a9f 100%);color:#fff;padding:60px 40px;text-align:center;}
+    .hero h1{font-size:3em;margin:0 0 16px;font-weight:800;letter-spacing:-1px;}
+    .hero .tagline{font-size:1.25em;color:#90cdf4;margin-bottom:32px;max-width:720px;margin-left:auto;margin-right:auto;}
+    .badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:6px 18px;font-size:0.9em;color:#e0f2fe;}
+    .badge.green{background:rgba(16,185,129,0.3);border-color:#10b981;color:#a7f3d0;}
+
+    /* Section */
+    .section{padding:60px 40px;max-width:1100px;margin:0 auto;}
+    .section-title{font-size:2em;font-weight:700;text-align:center;margin-bottom:8px;color:#0f2d52;}
+    .section-sub{text-align:center;color:#64748b;margin-bottom:40px;font-size:1.05em;}
+
+    /* Screenshot gallery */
+    .gallery-wrap{background:#0f2d52;padding:50px 40px;}
+    .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:1100px;margin:0 auto;}
+    .gallery-thumb{cursor:pointer;border-radius:8px;overflow:hidden;border:2px solid #1a3c5e;transition:border-color 0.2s,transform 0.2s;}
+    .gallery-thumb:hover{border-color:#38bdf8;transform:scale(1.02);}
+    .gallery-thumb img{width:100%;height:210px;object-fit:cover;display:block;}
+    .gallery-thumb p{background:#1e293b;color:#cbd5e1;font-size:0.85em;margin:0;padding:8px 12px;text-align:center;}
+
+    /* Lightbox */
+    .lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;justify-content:center;align-items:center;}
+    .lightbox.open{display:flex;}
+    .lightbox img{max-width:90%;max-height:85vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+    .lightbox-close{position:absolute;top:20px;right:30px;color:#fff;font-size:2.5em;cursor:pointer;line-height:1;}
+    .lightbox-caption{position:absolute;bottom:20px;color:#e2e8f0;font-size:1em;text-align:center;width:100%;}
+
+    /* Feature cards */
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+    .feature-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:box-shadow 0.2s;}
+    .feature-card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.1);}
+    .feature-icon{font-size:2.5em;margin-bottom:14px;}
+    .feature-card h3{font-size:1.1em;font-weight:700;margin:0 0 8px;color:#0f2d52;}
+    .feature-card p{color:#64748b;font-size:0.95em;line-height:1.6;margin:0;}
+
+    /* Workflow */
+    .how-wrap{background:linear-gradient(135deg,#0f2d52,#1a3c5e);padding:60px 40px;color:#fff;}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto;}
+    .step{text-align:center;padding:24px 16px;}
+    .step-num{width:56px;height:56px;border-radius:50%;background:#2563eb;color:#fff;font-size:1.4em;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+    .step h3{font-size:1.05em;font-weight:700;margin:0 0 10px;color:#e0f2fe;}
+    .step p{color:#94a3b8;font-size:0.9em;line-height:1.6;margin:0;}
+
+    /* Accounting table */
+    .acc-wrap{background:#f1f5f9;padding:60px 40px;}
+    .acc-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);max-width:900px;margin:0 auto;}
+    .acc-table th{background:#0f2d52;color:#fff;padding:14px 18px;text-align:left;font-size:0.95em;}
+    .acc-table td{padding:12px 18px;border-bottom:1px solid #e2e8f0;font-size:0.9em;vertical-align:top;}
+    .acc-table tr:last-child td{border-bottom:none;}
+    .acc-table tr:hover td{background:#f8fafc;}
+    .dr{color:#dc2626;font-weight:700;}
+    .cr{color:#16a34a;font-weight:700;}
+    code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.88em;color:#0f172a;}
+
+    /* Loan types */
+    .types-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;margin:0 auto;}
+    .type-card{background:#fff;border-left:4px solid #2563eb;border-radius:0 8px 8px 0;padding:20px 24px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+    .type-card h3{margin:0 0 6px;font-size:1.05em;color:#0f2d52;}
+    .type-card p{margin:0;color:#64748b;font-size:0.9em;line-height:1.5;}
+
+    /* Workflow states */
+    .states-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:32px 0;}
+    .state-box{background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:10px 20px;font-weight:600;font-size:0.9em;color:#64748b;position:relative;}
+    .state-box.active{background:#1a3c5e;border-color:#1a3c5e;color:#fff;}
+    .state-arrow{color:#94a3b8;font-size:1.5em;padding:0 6px;}
+
+    /* Compat */
+    .compat-section{background:#fff;padding:60px 40px;}
+    .compat-grid{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;max-width:900px;margin:0 auto;}
+    .compat-badge{background:#0f2d52;color:#fff;border-radius:8px;padding:10px 22px;font-weight:700;font-size:1.05em;}
+    .compat-badge.current{background:#2563eb;}
+
+    /* Support */
+    .support-wrap{background:linear-gradient(135deg,#0f2d52,#1a3c5e);padding:60px 40px;color:#fff;}
+    .support-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto;}
+    .support-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:32px 24px;text-align:center;}
+    .support-card h3{font-size:1.2em;font-weight:700;margin:0 0 12px;color:#90cdf4;}
+    .support-card p{color:#94a3b8;font-size:0.95em;line-height:1.6;margin:0 0 20px;}
+    .btn{display:inline-block;padding:10px 24px;border-radius:6px;font-weight:600;font-size:0.95em;cursor:pointer;}
+    .btn-blue{background:#2563eb;color:#fff;}
+    .btn-blue:hover{background:#1d4ed8;text-decoration:none;}
+    .btn-navy{background:#0f2d52;color:#fff;border:1px solid rgba(255,255,255,0.3);}
+    .btn-navy:hover{background:#1a3c5e;text-decoration:none;}
+
+    /* Footer */
+    .footer{background:#0a1628;color:#64748b;padding:32px 40px;text-align:center;}
+    .footer a{color:#38bdf8;}
+
+    @media(max-width:768px){
+        .gallery{grid-template-columns:1fr;}
+        .features-grid{grid-template-columns:1fr;}
+        .steps{grid-template-columns:1fr;}
+        .types-grid{grid-template-columns:1fr;}
+        .support-grid{grid-template-columns:1fr;}
+        .hero h1{font-size:2em;}
+    }
+</style>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+    <div style="font-size:0.9em;color:#38bdf8;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase;">Odoo 19 | Accounting / Finance</div>
+    <img src="icon.png" alt="Loan Management" style="width:80px;height:80px;border-radius:16px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);"/>
+    <h1>Loan Management System</h1>
+    <p class="tagline">Manage company bank loans end-to-end — liability accounting, amortisation schedules, approval workflow and professional PDF statements</p>
+    <div class="badges">
+        <span class="badge green">&#10003; Odoo Online</span>
+        <span class="badge green">&#10003; Odoo.sh</span>
+        <span class="badge green">&#10003; On-Premise</span>
+        <span class="badge">&#127981; Liability Accounting</span>
+        <span class="badge">&#128200; Amortisation Table</span>
+        <span class="badge">&#128196; PDF Statement</span>
+    </div>
+</div>
+
+<!-- ===== SCREENSHOT GALLERY ===== -->
+<div class="gallery-wrap">
+    <div style="text-align:center;margin-bottom:32px;">
+        <h2 style="color:#fff;font-size:1.8em;margin:0 0 8px;">See It In Action</h2>
+        <p style="color:#90cdf4;margin:0;">Real screenshots from a live Odoo 19 instance — click to enlarge</p>
+    </div>
+    <div class="gallery">
+        <div class="gallery-thumb" onclick="openLightbox('screenshot_01_loans_list.png','All Loans — List View with Running Status')">
+            <img src="screenshot_01_loans_list.png" alt="Loans List View"/>
+            <p>&#128203; All Loans — List View</p>
+        </div>
+        <div class="gallery-thumb" onclick="openLightbox('screenshot_02_loan_form.png','Loan Form — LN/2025/0001 Al Rajhi Bank')">
+            <img src="screenshot_02_loan_form.png" alt="Loan Form View"/>
+            <p>&#128196; Loan Form — Details &amp; Summary</p>
+        </div>
+        <div class="gallery-thumb" onclick="openLightbox('screenshot_03_repayment_schedule.png','Repayment Schedule — Amortisation Table')">
+            <img src="screenshot_03_repayment_schedule.png" alt="Repayment Schedule"/>
+            <p>&#128200; Repayment Schedule — Amortisation Table</p>
+        </div>
+        <div class="gallery-thumb" onclick="openLightbox('screenshot_04_journal_entries.png','Journal Entries — Disbursement &amp; Repayments')">
+            <img src="screenshot_04_journal_entries.png" alt="Journal Entries"/>
+            <p>&#128214; Journal Entries — Full Audit Trail</p>
+        </div>
+    </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" src="" alt=""/>
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<!-- ===== APPROVAL WORKFLOW ===== -->
+<div class="section">
+    <h2 class="section-title">Approval Workflow</h2>
+    <p class="section-sub">Full loan lifecycle from application to closure with role-based access control</p>
+    <div class="states-row">
+        <div class="state-box">Draft</div>
+        <div class="state-arrow">&#8594;</div>
+        <div class="state-box">Confirmed</div>
+        <div class="state-arrow">&#8594;</div>
+        <div class="state-box">Approved</div>
+        <div class="state-arrow">&#8594;</div>
+        <div class="state-box active">Running</div>
+        <div class="state-arrow">&#8594;</div>
+        <div class="state-box">Closed</div>
+    </div>
+    <p style="text-align:center;color:#64748b;max-width:700px;margin:0 auto;">
+        Loan officers submit applications in <strong>Draft</strong>, managers confirm and approve,
+        finance disburses funds (creating the Dr Bank / Cr Loan Payable entry),
+        and the loan moves to <strong>Running</strong> as instalments are paid month by month.
+    </p>
+</div>
+
+<!-- ===== KEY FEATURES ===== -->
+<div style="background:#f1f5f9;padding:60px 40px;">
+    <div style="max-width:1100px;margin:0 auto;">
+        <h2 class="section-title">Key Features</h2>
+        <p class="section-sub">Everything your finance team needs to manage bank borrowings</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#127981;</div>
+                <h3>Correct Liability Accounting</h3>
+                <p>Disbursement posts Dr Bank / Cr Loan Payable. Each repayment posts Dr Loan Payable + Dr Interest Expense / Cr Bank. Textbook double-entry, automatically.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128200;</div>
+                <h3>Amortisation Schedule</h3>
+                <p>Auto-generated repayment table showing principal, interest, EMI and outstanding balance for every instalment — both Flat Rate and Reducing Balance methods.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#9989;</div>
+                <h3>One-Click Instalment Payment</h3>
+                <p>Pay any instalment with a single click. The journal entry is created and posted immediately. Loan closes automatically when all instalments are settled.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128196;</div>
+                <h3>Professional PDF Statement</h3>
+                <p>Print a full loan statement with amortisation table, lender details, instalment history and outstanding balance — ready to attach to audit files.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#127959;</div>
+                <h3>Multiple Loan Types</h3>
+                <p>Configure Term Loans, Mortgages, Working Capital, Vehicle Finance — each with its own default interest rate, method, accounts and duration limits.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128214;</div>
+                <h3>Full Journal Entry Trail</h3>
+                <p>Every disbursement and repayment is linked to the loan. Smart button shows all journal entries. Complete audit trail for your external auditors.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HOW IT WORKS ===== -->
+<div class="how-wrap">
+    <div style="text-align:center;margin-bottom:40px;">
+        <h2 style="color:#fff;font-size:1.8em;margin:0 0 8px;">How It Works</h2>
+        <p style="color:#90cdf4;margin:0;">Three simple steps from loan application to repayment</p>
+    </div>
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <h3>Apply &amp; Approve</h3>
+            <p>Create a loan application, select the bank, set the amount, interest rate and duration. Submit for confirmation and management approval.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <h3>Disburse &amp; Schedule</h3>
+            <p>Click "Receive Loan" to post the disbursement entry. The amortisation schedule is generated automatically for the full loan period.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <h3>Pay Instalments</h3>
+            <p>Each month, click Pay on the due instalment. Principal and interest journal entries are posted. Loan closes when all instalments are paid.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ACCOUNTING ENTRIES ===== -->
+<div class="acc-wrap">
+    <div style="max-width:900px;margin:0 auto;">
+        <h2 class="section-title">Accounting Entries</h2>
+        <p class="section-sub">Correct liability-side accounting — company borrows from the bank</p>
+        <table class="acc-table">
+            <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Account</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2"><strong>Disbursement</strong><br/><span style="color:#64748b;font-size:0.85em;">Company receives loan proceeds</span></td>
+                    <td>Bank / Cash Account</td>
+                    <td class="dr">&#43; Loan Amount</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>Loan Payable (Liability)</td>
+                    <td>—</td>
+                    <td class="cr">&#43; Loan Amount</td>
+                </tr>
+                <tr style="background:#f8fafc;">
+                    <td rowspan="3"><strong>Each Repayment</strong><br/><span style="color:#64748b;font-size:0.85em;">Monthly instalment payment</span></td>
+                    <td>Loan Payable (Liability)</td>
+                    <td class="dr">&#43; Principal</td>
+                    <td>—</td>
+                </tr>
+                <tr style="background:#f8fafc;">
+                    <td>Interest Expense</td>
+                    <td class="dr">&#43; Interest</td>
+                    <td>—</td>
+                </tr>
+                <tr style="background:#f8fafc;">
+                    <td>Bank / Cash Account</td>
+                    <td>—</td>
+                    <td class="cr">&#43; EMI Total</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== LOAN TYPES ===== -->
+<div class="section">
+    <h2 class="section-title">Built-In Loan Types</h2>
+    <p class="section-sub">Pre-configured for the most common bank borrowings — fully customisable</p>
+    <div class="types-grid">
+        <div class="type-card">
+            <h3>&#127981; Term Loan</h3>
+            <p>Medium to long-term bank financing. Reducing balance method. Up to 60 months. Suitable for business expansion and asset purchase.</p>
+        </div>
+        <div class="type-card" style="border-left-color:#10b981;">
+            <h3>&#127968; Mortgage Loan</h3>
+            <p>Real estate and property financing. Reducing balance over up to 300 months. Low fixed rate with structured amortisation.</p>
+        </div>
+        <div class="type-card" style="border-left-color:#f59e0b;">
+            <h3>&#128176; Working Capital Loan</h3>
+            <p>Short-term operational financing. Flat rate method for simple interest calculation. Up to 24 months. Fast approval workflow.</p>
+        </div>
+        <div class="type-card" style="border-left-color:#8b5cf6;">
+            <h3>&#128664; Vehicle Finance</h3>
+            <p>Vehicle and equipment leasing. Reducing balance over up to 60 months. Track multiple vehicles under separate loan records.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== COMPATIBILITY ===== -->
+<div class="compat-section">
+    <h2 class="section-title">Compatibility</h2>
+    <p class="section-sub">Built for Odoo 19 — works on all deployment options</p>
+    <div class="compat-grid">
+        <span class="compat-badge">Odoo 17</span>
+        <span class="compat-badge">Odoo 18</span>
+        <span class="compat-badge current">Odoo 19 &#10003;</span>
+    </div>
+    <p style="text-align:center;color:#64748b;margin:40px 0 12px;font-weight:600;">Dependencies</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <span style="background:#f1f5f9;border:2px solid #e2e8f0;color:#0f2d52;border-radius:8px;padding:10px 22px;font-weight:600;">base</span>
+        <span style="background:#f1f5f9;border:2px solid #e2e8f0;color:#0f2d52;border-radius:8px;padding:10px 22px;font-weight:600;">mail</span>
+        <span style="background:#f1f5f9;border:2px solid #e2e8f0;color:#0f2d52;border-radius:8px;padding:10px 22px;font-weight:600;">account</span>
+    </div>
+</div>
+
+<!-- ===== SUPPORT ===== -->
+<div class="support-wrap">
+    <div style="text-align:center;margin-bottom:40px;">
+        <h2 style="color:#fff;font-size:1.8em;margin:0 0 8px;">Support &amp; Services</h2>
+        <p style="color:#90cdf4;margin:0;">We are here to help you get up and running</p>
+    </div>
+    <div class="support-grid">
+        <div class="support-card">
+            <h3>&#127381; Free Demo</h3>
+            <p>Try Loan Management on your own Odoo instance with our demo data. See real amortisation schedules and journal entries before you buy.</p>
+            <a href="mailto:abdzoro89@gmail.com?subject=Loan Management Demo Request" class="btn btn-blue">Request Demo</a>
+        </div>
+        <div class="support-card">
+            <h3>&#127863; Priority Support</h3>
+            <p>Purchase includes 1 year of priority email support, bug fixes and minor feature updates. Extended annual support plans available.</p>
+            <a href="mailto:abdzoro89@gmail.com" class="btn btn-navy">Contact Support</a>
+        </div>
+        <div class="support-card">
+            <h3>&#9881; Customisation</h3>
+            <p>Need additional loan types, multi-currency, collateral tracking, Islamic finance (Murabaha/Ijara) or custom PDF templates? We build it.</p>
+            <a href="mailto:abdzoro89@gmail.com?subject=Loan Management Customisation" class="btn btn-blue">Get a Quote</a>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:40px;color:#64748b;font-size:0.95em;">
+        <strong style="color:#90cdf4;">Email:</strong>&#160;<a href="mailto:abdzoro89@gmail.com" style="color:#38bdf8;">abdzoro89@gmail.com</a>
+        &#160;&#160;|&#160;&#160;
+        <strong style="color:#90cdf4;">Website:</strong>&#160;<a href="https://leapai.ai" style="color:#38bdf8;">leapai.ai</a>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+    <p style="margin:0 0 8px;font-size:1.1em;color:#e2e8f0;font-weight:600;">Loan Management System for Odoo 19</p>
+    <p style="margin:0 0 8px;">Built by <a href="https://leapai.ai">leapai.ai</a> &#160;|&#160; Maintainer: <a href="mailto:abdzoro89@gmail.com">abdzoro89@gmail.com</a></p>
+    <p style="margin:0;font-size:0.85em;">Licensed under LGPL-3 &#160;|&#160; Version 19.0.2.0.0</p>
+</div>
+
+<script>
+function openLightbox(src, caption) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-caption').textContent = caption;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+    if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_loan_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="loan">
+                <t t-call="web.external_layout">
+                    <t t-set="o" t-value="loan"/>
+                    <div class="page">
+
+                        <!-- ================================================ -->
+                        <!--  Header                                           -->
+                        <!-- ================================================ -->
+                        <style>
+                            .loan-header {
+                                background-color: #1565C0;
+                                color: white;
+                                padding: 18px 24px;
+                                border-radius: 4px;
+                                margin-bottom: 24px;
+                            }
+                            .loan-header h2 { margin: 0; font-size: 22px; font-weight: 700; }
+                            .loan-header .sub { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+                            .section-title {
+                                color: #1565C0;
+                                border-bottom: 2px solid #1565C0;
+                                padding-bottom: 4px;
+                                margin-top: 20px;
+                                margin-bottom: 12px;
+                                font-size: 13px;
+                                font-weight: 700;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                            }
+                            .info-table td { padding: 4px 8px; font-size: 12px; }
+                            .info-table td:first-child { color: #555; width: 180px; }
+                            .info-table td:last-child { font-weight: 600; }
+                            .schedule-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+                            .schedule-table thead tr { background-color: #1565C0; color: white; }
+                            .schedule-table thead th { padding: 7px 6px; text-align: right; }
+                            .schedule-table thead th:first-child { text-align: center; }
+                            .schedule-table thead th:nth-child(2) { text-align: left; }
+                            .schedule-table tbody tr:nth-child(even) { background-color: #f5f8ff; }
+                            .schedule-table tbody td { padding: 5px 6px; text-align: right; border-bottom: 1px solid #e0e0e0; }
+                            .schedule-table tbody td:first-child { text-align: center; }
+                            .schedule-table tbody td:nth-child(2) { text-align: left; }
+                            .schedule-table tfoot tr { background-color: #1565C0; color: white; font-weight: 700; }
+                            .schedule-table tfoot td { padding: 7px 6px; text-align: right; }
+                            .schedule-table tfoot td:first-child { text-align: left; }
+                            .state-badge {
+                                padding: 2px 8px;
+                                border-radius: 10px;
+                                font-size: 10px;
+                                font-weight: 600;
+                                display: inline-block;
+                            }
+                            .badge-paid { background: #d4edda; color: #155724; }
+                            .badge-pending { background: #cce5ff; color: #004085; }
+                            .badge-overdue { background: #f8d7da; color: #721c24; }
+                            .badge-partial { background: #fff3cd; color: #856404; }
+                            .summary-box {
+                                background: #f5f8ff;
+                                border: 1px solid #1565C0;
+                                border-radius: 4px;
+                                padding: 16px 20px;
+                                margin-top: 20px;
+                            }
+                            .summary-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+                            .summary-row.total { border-top: 2px solid #1565C0; margin-top: 6px; padding-top: 8px; font-weight: 700; font-size: 13px; color: #1565C0; }
+                            .summary-row.paid { color: #155724; }
+                            .summary-row.outstanding { color: #721c24; }
+                        </style>
+
+                        <div class="loan-header">
+                            <h2>Loan Statement</h2>
+                            <div class="sub">
+                                <t t-esc="loan.name"/> &#x2022;
+                                Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d %B %Y')"/>
+                            </div>
+                        </div>
+
+                        <!-- ================================================ -->
+                        <!--  Loan Details                                     -->
+                        <!-- ================================================ -->
+                        <div class="section-title">Loan Details</div>
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="info-table">
+                                    <tr>
+                                        <td>Loan Reference</td>
+                                        <td><t t-esc="loan.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Loan Type</td>
+                                        <td><t t-esc="loan.loan_type_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lender / Bank</td>
+                                        <td>
+                                            <t t-esc="loan.partner_id.name or 'N/A'"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lender Type</td>
+                                        <td>
+                                            <t t-if="loan.lender_type == 'bank'">Bank</t>
+                                            <t t-elif="loan.lender_type == 'financial_institution'">Financial Institution</t>
+                                            <t t-else="">Other Partner</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Application Date</td>
+                                        <td><t t-esc="loan.date_application" t-options='{"widget": "date"}'/></td>
+                                    </tr>
+                                    <t t-if="loan.date_approve">
+                                        <tr>
+                                            <td>Approval Date</td>
+                                            <td><t t-esc="loan.date_approve" t-options='{"widget": "date"}'/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="loan.date_disburse">
+                                        <tr>
+                                            <td>Disbursement Date</td>
+                                            <td><t t-esc="loan.date_disburse" t-options='{"widget": "date"}'/></td>
+                                        </tr>
+                                    </t>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="info-table">
+                                    <tr>
+                                        <td>Loan Amount</td>
+                                        <td>
+                                            <t t-esc="loan.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(loan.loan_amount)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Interest Rate</td>
+                                        <td><t t-esc="'%.2f' % loan.interest_rate"/>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Interest Method</td>
+                                        <td>
+                                            <t t-if="loan.interest_method == 'flat'">Flat Rate</t>
+                                            <t t-else="">Reducing Balance</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Duration</td>
+                                        <td><t t-esc="loan.duration"/> months</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monthly EMI</td>
+                                        <td>
+                                            <t t-esc="loan.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(loan.emi_amount)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status</td>
+                                        <td><t t-esc="dict(loan._fields['state'].selection).get(loan.state, loan.state).title()"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Responsible</td>
+                                        <td><t t-esc="loan.user_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ================================================ -->
+                        <!--  Repayment Schedule                               -->
+                        <!-- ================================================ -->
+                        <t t-if="loan.installment_ids">
+                            <div class="section-title">Repayment Schedule</div>
+                            <table class="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Due Date</th>
+                                        <th>Principal</th>
+                                        <th>Interest</th>
+                                        <th>EMI Amount</th>
+                                        <th>Balance</th>
+                                        <th>Status</th>
+                                        <th>Paid On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="loan.installment_ids" t-as="inst">
+                                        <tr>
+                                            <td><t t-esc="inst.sequence"/></td>
+                                            <td><t t-esc="inst.due_date" t-options='{"widget": "date"}'/></td>
+                                            <td>
+                                                <t t-esc="loan.currency_id.symbol"/>
+                                                <t t-esc="'{:,.2f}'.format(inst.principal_amount)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="loan.currency_id.symbol"/>
+                                                <t t-esc="'{:,.2f}'.format(inst.interest_amount)"/>
+                                            </td>
+                                            <td>
+                                                <strong>
+                                                    <t t-esc="loan.currency_id.symbol"/>
+                                                    <t t-esc="'{:,.2f}'.format(inst.total_amount)"/>
+                                                </strong>
+                                            </td>
+                                            <td>
+                                                <t t-esc="loan.currency_id.symbol"/>
+                                                <t t-esc="'{:,.2f}'.format(inst.balance)"/>
+                                            </td>
+                                            <td>
+                                                <t t-if="inst.state == 'paid'">
+                                                    <span class="state-badge badge-paid">Paid</span>
+                                                </t>
+                                                <t t-elif="inst.state == 'overdue'">
+                                                    <span class="state-badge badge-overdue">Overdue</span>
+                                                </t>
+                                                <t t-elif="inst.state == 'partial'">
+                                                    <span class="state-badge badge-partial">Partial</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="state-badge badge-pending">Pending</span>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <t t-if="inst.payment_date">
+                                                    <t t-esc="inst.payment_date" t-options='{"widget": "date"}'/>
+                                                </t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2">Total</td>
+                                        <td>
+                                            <t t-esc="loan.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(sum(loan.installment_ids.mapped('principal_amount')))"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="loan.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(sum(loan.installment_ids.mapped('interest_amount')))"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="loan.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(sum(loan.installment_ids.mapped('total_amount')))"/>
+                                        </td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- ================================================ -->
+                        <!--  Summary                                          -->
+                        <!-- ================================================ -->
+                        <div class="summary-box">
+                            <div class="section-title" style="margin-top:0; color:#1565C0;">Financial Summary</div>
+                            <div class="summary-row">
+                                <span>Loan Principal</span>
+                                <span>
+                                    <t t-esc="loan.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(loan.loan_amount)"/>
+                                </span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Total Interest</span>
+                                <span>
+                                    <t t-esc="loan.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(loan.total_interest)"/>
+                                </span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total Payable</span>
+                                <span>
+                                    <t t-esc="loan.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(loan.total_amount)"/>
+                                </span>
+                            </div>
+                            <div class="summary-row paid">
+                                <span>Amount Paid</span>
+                                <span>
+                                    <t t-esc="loan.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(loan.amount_paid)"/>
+                                </span>
+                            </div>
+                            <div class="summary-row outstanding">
+                                <span>Outstanding Balance</span>
+                                <span>
+                                    <t t-esc="loan.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(loan.amount_residual)"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- ================================================ -->
+                        <!--  Footer note                                      -->
+                        <!-- ================================================ -->
+                        <div style="margin-top: 30px; font-size: 10px; color: #888; text-align: center;">
+                            This is a computer-generated document. No signature is required.
+                            <br/>
+                            <t t-esc="loan.company_id.name"/> &#x2022; <t t-esc="loan.name"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
