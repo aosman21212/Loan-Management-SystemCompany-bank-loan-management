@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+# =============================================================================
+#  Loan Management System
+# -----------------------------------------------------------------------------
+#  Location  : King Abdulaziz Branch Road, Riyadh, Saudi Arabia
+#  Email     : sales@leapai.ai
+#  Phone     : +966 53 553 3627
+#  Website   : https://leapai.ai
+#  Developer : Abdulkaraim Osman — Tech Manager | Backend Engineer | DevOps Engineer
+#              at Bab International Corp For Specialized Services
+#  LinkedIn  : https://www.linkedin.com/in/abdulkaraim-o-385b7a110/
+# =============================================================================
 {
     'name': 'Loan Management System',
     'version': '19.0.2.0.0',
@@ -26,9 +38,9 @@ Manages loans the **company takes from banks / financial institutions**.
 **Maintainer:** a.osman@bab.com.sa
     """,
     'author': 'leapai.ai',
+    'maintainer': 'Abdulkaraim Osman',
+    'support': 'sales@leapai.ai',
     'website': 'https://leapai.ai/en/',
-    'support': 'abdzoro89@gmail.com',
-    'maintainer': 'a.osman@bab.com.sa',
     'images': [
         'static/description/banner.png',
         'static/description/screenshot_01_loans_list.png',
